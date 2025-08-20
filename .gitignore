@@ -1,0 +1,43 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+*.env
+*.txt
+# Output of `go build`
+*.out
+
+# Go coverage
+*.cover
+*.cov
+*.gcov
+*.prof
+
+# Dependency directories (vendor)
+vendor/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# IDE / Editor stuff
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Air live reload config (if using cosmtrek/air)
+.air.toml
+tmp/
