@@ -1,5 +1,6 @@
 package usecase
 
 type Usecases struct {
-	User *UserUsecase
+	User    *UserUsecase
+	Product *ProductUseCase
 }

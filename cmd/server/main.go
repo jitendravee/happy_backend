@@ -17,15 +17,18 @@ func main() {
 	mongoDB := db.NewMongoDatabase(cfg)
 
 	repos := &repository.Repositories{
-		User: repository.NewMongoUserRepo(mongoDB),
+		Product: repository.NewMongoProductRepo(mongoDB),
+		User:    repository.NewMongoUserRepo(mongoDB),
 	}
 	jwtExpiry, _ := time.ParseDuration(cfg.JWTExpiry)
 	jwtRefreshExpiry, _ := time.ParseDuration(cfg.JWTRefreshExpiry)
+
 	ucs := &usecase.Usecases{
 		User: usecase.NewUserUsecase(repos.User, cfg.JWTSecret,
 			cfg.JWTRefreshSecret,
 			jwtExpiry,
 			jwtRefreshExpiry),
+		Product: usecase.NewProductUseCase(repos.Product),
 	}
 
 	r := httpDelivery.NewServer(cfg, ucs)

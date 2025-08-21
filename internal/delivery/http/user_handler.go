@@ -6,7 +6,6 @@ import (
 
 	"happy_backend/internal/entities"
 	"happy_backend/internal/usecase"
-	"happy_backend/pkg/middleware"
 	"happy_backend/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -16,20 +15,8 @@ type UserHandler struct {
 	uc *usecase.UserUsecase
 }
 
-func NewUserHandler(r *gin.Engine, uc *usecase.UserUsecase) {
-	h := &UserHandler{uc: uc}
-
-	// Public routes
-	r.POST("/signup", h.SignUp)
-	r.POST("/signin", h.SignIn)
-	r.POST("/refresh", h.Refresh)
-
-	// Protected routes
-	auth := r.Group("/auth")
-	auth.Use(middleware.AuthMiddleware(uc.Secret())) // inject JWT secret
-	{
-		auth.GET("/me", h.Me)
-	}
+func NewUserHandler(uc *usecase.UserUsecase) *UserHandler {
+	return &UserHandler{uc: uc}
 }
 
 func (h *UserHandler) SignUp(c *gin.Context) {
@@ -50,33 +37,14 @@ func (h *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("access_token", accessToken, 900, "/", "", false, true)
-	c.SetCookie("refresh_token", refreshToken, 604800, "/", "", false, true)
+	// Set HttpOnly cookies
+	c.SetCookie("access_token", accessToken, 900, "/", "", false, true)         // 15 min
+	c.SetCookie("refresh_token", refreshToken, 7*24*3600, "/", "", false, true) // 7 days
 
+	// Don’t return tokens in JSON
 	response.Success(c, http.StatusCreated, "User created successfully", gin.H{
-		"email":         user.Email,
-		"id":            user.ID,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
-}
-func (h *UserHandler) Me(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		response.Error(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
-
-	user, err := h.uc.GetByID(userID.(string))
-	if err != nil || user == nil {
-		response.Error(c, http.StatusNotFound, "User not found")
-		return
-	}
-
-	response.Success(c, http.StatusOK, "User profile", gin.H{
-		"id":    user.ID,
-		"name":  user.Name,
 		"email": user.Email,
+		"id":    user.ID,
 	})
 }
 
@@ -96,15 +64,14 @@ func (h *UserHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	// HttpOnly cookies (set Secure=true in production HTTPS)
+	// Set HttpOnly cookies
 	c.SetCookie("access_token", accessToken, 900, "/", "", false, true)         // 15 min
 	c.SetCookie("refresh_token", refreshToken, 7*24*3600, "/", "", false, true) // 7 days
 
+	// Don’t return tokens in JSON
 	response.Success(c, http.StatusOK, "Login successful", gin.H{
-		"email":         user.Email,
-		"id":            user.ID,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"email": user.Email,
+		"id":    user.ID,
 	})
 }
 
@@ -123,7 +90,25 @@ func (h *UserHandler) Refresh(c *gin.Context) {
 
 	c.SetCookie("access_token", newAT, 900, "/", "", false, true)
 
-	response.Success(c, http.StatusOK, "Token refreshed", gin.H{
-		"access_token": newAT,
+	response.Success(c, http.StatusOK, "Token refreshed", nil)
+}
+
+func (h *UserHandler) Me(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		response.Error(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	user, err := h.uc.GetByID(userID.(string))
+	if err != nil || user == nil {
+		response.Error(c, http.StatusNotFound, "User not found")
+		return
+	}
+
+	response.Success(c, http.StatusOK, "User profile", gin.H{
+		"id":    user.ID,
+		"name":  user.Name,
+		"email": user.Email,
 	})
 }
