@@ -10,4 +10,10 @@ type UserRepository interface {
 type ProductRepository interface {
 	Create(product *entities.Product) error
 	GetByName(productName string) (*entities.Product, error)
+	GetByID(productID string) (*entities.Product, error)
+	GetAllProducts() (*[]entities.Product, error)
+	UpdateProductByID(id string, product *entities.Product) (*entities.Product, error)
+	DeleteProductByID(id string) error
+	AddColorsToProduct(productID string, colors *[]entities.Color) (*[]entities.Color, error)
+	UpdateProductColor(id string, colorId string, color *entities.Color) (*entities.Color, error)
 }

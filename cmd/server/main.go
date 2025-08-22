@@ -12,26 +12,46 @@ import (
 )
 
 func main() {
+	// Load config
 	cfg := config.LoadConfig()
 
-	mongoDB := db.NewMongoDatabase(cfg)
-
-	repos := &repository.Repositories{
-		Product: repository.NewMongoProductRepo(mongoDB),
-		User:    repository.NewMongoUserRepo(mongoDB),
+	// Initialize Postgres (Neon) with GORM
+	postgresDB, err := db.NewPostgresDatabase(cfg) // <- this replaces mongo
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
 	}
+
+	// Run migrations (auto-create tables for entities)
+	if err := db.Migrate(postgresDB); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
+	}
+
+	// Initialize repositories
+	repos := &repository.Repositories{
+		Product: repository.NewGormProductRepo(postgresDB),
+		User:    repository.NewGormUserRepo(postgresDB),
+	}
+
+	// Parse JWT expiry durations
 	jwtExpiry, _ := time.ParseDuration(cfg.JWTExpiry)
 	jwtRefreshExpiry, _ := time.ParseDuration(cfg.JWTRefreshExpiry)
 
+	// Initialize use cases
 	ucs := &usecase.Usecases{
-		User: usecase.NewUserUsecase(repos.User, cfg.JWTSecret,
+		User: usecase.NewUserUsecase(
+			repos.User,
+			cfg.JWTSecret,
 			cfg.JWTRefreshSecret,
 			jwtExpiry,
-			jwtRefreshExpiry),
+			jwtRefreshExpiry,
+		),
 		Product: usecase.NewProductUseCase(repos.Product),
 	}
 
+	// Start HTTP server
 	r := httpDelivery.NewServer(cfg, ucs)
 	log.Println("🚀 Server running on :" + cfg.Port)
-	r.Run(":" + cfg.Port)
+	if err := r.Run(":" + cfg.Port); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
 }

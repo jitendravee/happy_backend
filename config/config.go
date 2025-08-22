@@ -8,8 +8,14 @@ import (
 )
 
 type Config struct {
-	DBURI            string
-	DBName           string
+	// Postgres DB config
+	DBHost     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBPort     string
+
+	// App config
 	Port             string
 	JWTSecret        string
 	JWTRefreshSecret string
@@ -18,15 +24,31 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	// Load .env file
-	err := godotenv.Load()
+	// Try multiple possible locations
+	paths := []string{".env", "config/.env"}
+
+	var err error
+	for _, path := range paths {
+		if _, statErr := os.Stat(path); statErr == nil {
+			err = godotenv.Load(path)
+			if err == nil {
+				log.Printf("✅ Loaded env file from %s\n", path)
+				break
+			}
+		}
+	}
+
 	if err != nil {
 		log.Println("⚠️ No .env file found, falling back to system environment variables")
 	}
 
 	return &Config{
-		DBURI:            getEnv("MONGO_URI", ""),
-		DBName:           getEnv("MONGO_DBNAME", "happydb"),
+		DBHost:     getEnv("DB_HOST", "ep-mute-violet-adslhi5i-pooler.c-2.us-east-1.aws.neon.tech"),
+		DBUser:     getEnv("DB_USER", "neondb_owner"),
+		DBPassword: getEnv("DB_PASSWORD", "npg_dlV1wk4eMRWa"),
+		DBName:     getEnv("DB_NAME", "neondb"),
+		DBPort:     getEnv("DB_PORT", "5432"),
+
 		Port:             getEnv("PORT", "8080"),
 		JWTSecret:        getEnv("JWT_SECRET", "defaultsecret"),
 		JWTRefreshSecret: getEnv("JWT_REFRESH_SECRET", "defaultrefresh"),

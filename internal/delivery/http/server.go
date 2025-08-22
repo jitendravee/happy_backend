@@ -32,6 +32,13 @@ func NewServer(cfg *config.Config, ucs *usecase.Usecases) *gin.Engine {
 		productHandler := NewProductHandler(ucs.Product)
 		{
 			productGroup.POST("", productHandler.AddProduct)
+			productGroup.GET("/:id", productHandler.GetProductById)
+			productGroup.GET("", productHandler.GetProductsList)
+			productGroup.PATCH("/:id", productHandler.UpdateTheProductById)
+			productGroup.DELETE("/:id", productHandler.DeleteProductByID)
+			productGroup.POST("/:id/colors", productHandler.AddNewColorToProduct)
+			productGroup.PATCH("/:id/colors/:color_id", productHandler.UpdateProductColor)
+
 			// productGroup.POST("/", productHandler.Create)
 		}
 
