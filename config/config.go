@@ -45,7 +45,7 @@ func LoadConfig() *Config {
 	return &Config{
 		DBHost:     getEnv("DB_HOST", "ep-mute-violet-adslhi5i-pooler.c-2.us-east-1.aws.neon.tech"),
 		DBUser:     getEnv("DB_USER", "neondb_owner"),
-		DBPassword: getEnv("DB_PASSWORD", "npg_dlV1wk4eMRWa"),
+		DBPassword: getEnv("DB_PASSWORD", "npg_dk4eMRWa"),
 		DBName:     getEnv("DB_NAME", "neondb"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 
