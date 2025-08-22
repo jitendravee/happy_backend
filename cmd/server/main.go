@@ -28,8 +28,10 @@ func main() {
 
 	// Initialize repositories
 	repos := &repository.Repositories{
-		Product: repository.NewGormProductRepo(postgresDB),
-		User:    repository.NewGormUserRepo(postgresDB),
+		Product:       repository.NewGormProductRepo(postgresDB),
+		User:          repository.NewGormUserRepo(postgresDB),
+		TrendingColor: repository.NewGoramTrendingColorRepo(postgresDB),
+		CommonColor:   repository.NewGoramCommonColorRepo(postgresDB),
 	}
 
 	// Parse JWT expiry durations
@@ -45,7 +47,9 @@ func main() {
 			jwtExpiry,
 			jwtRefreshExpiry,
 		),
-		Product: usecase.NewProductUseCase(repos.Product),
+		Product:       usecase.NewProductUseCase(repos.Product),
+		TrendingColor: usecase.NewTrendingColorUseCase(repos.TrendingColor),
+		CommonColor:   usecase.NewCommonColorUseCase(repos.CommonColor),
 	}
 
 	// Start HTTP server

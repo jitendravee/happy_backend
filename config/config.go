@@ -24,29 +24,25 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	// Try multiple possible locations
-	paths := []string{".env", "config/.env"}
+	err := godotenv.Load(".env") // load from project root
+	wd, _ := os.Getwd()
+	log.Println("Working directory:", wd)
 
-	var err error
-	for _, path := range paths {
-		if _, statErr := os.Stat(path); statErr == nil {
-			err = godotenv.Load(path)
-			if err == nil {
-				log.Printf("✅ Loaded env file from %s\n", path)
-				break
-			}
-		}
+	if err != nil {
+		err = godotenv.Load("config/.env") // fallback
 	}
 
 	if err != nil {
 		log.Println("⚠️ No .env file found, falling back to system environment variables")
+	} else {
+		log.Println("✅ Loaded env file successfully")
 	}
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "ep-mute-violet-adslhi5i-pooler.c-2.us-east-1.aws.neon.tech"),
-		DBUser:     getEnv("DB_USER", "neondb_owner"),
-		DBPassword: getEnv("DB_PASSWORD", "npg_dk4eMRWa"),
-		DBName:     getEnv("DB_NAME", "neondb"),
+		DBHost:     getEnv("DB_HOST", ""),
+		DBUser:     getEnv("DB_USER", ""),
+		DBPassword: getEnv("DB_PASSWORD", ""),
+		DBName:     getEnv("DB_NAME", ""),
 		DBPort:     getEnv("DB_PORT", "5432"),
 
 		Port:             getEnv("PORT", "8080"),

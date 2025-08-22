@@ -17,3 +17,16 @@ type ProductRepository interface {
 	AddColorsToProduct(productID string, colors *[]entities.Color) (*[]entities.Color, error)
 	UpdateProductColor(id string, colorId string, color *entities.Color) (*entities.Color, error)
 }
+
+type TrendingColorRepository interface {
+	GetTrendingColors() (*[]entities.TrendingColor, error)
+	AddTrendingColors(colors *[]entities.TrendingColor) error
+	UpdateTrendingColor(colorID string, color *entities.TrendingColor) (*entities.TrendingColor, error)
+	DeleteTrendingColorByID(colorID string) error
+}
+type CommonColorRepository interface {
+	GetCommonColors() (*[]entities.CommonColor, error)
+	AddCommonColors(colors *[]entities.CommonColor) error
+	UpdateCommonColor(colorID string, color *entities.CommonColor) (*entities.CommonColor, error)
+	DeleteCommonColorByID(colorID string) error
+}
