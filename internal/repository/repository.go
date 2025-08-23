@@ -45,3 +45,6 @@ type AddressRepository interface {
 	UpdateAddress(userID, addressID string, updated *entities.Address) (*entities.Address, error)
 	DeleteAddress(userID, addressID string) error
 }
+type CheckoutRepository interface {
+	GetCheckoutSummary(userID string, items *[]entities.CartItem, deliveryCharge, taxPercent float32) (*entities.CheckoutSummary, error)
+}

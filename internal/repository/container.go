@@ -7,4 +7,5 @@ type Repositories struct {
 	CommonColor   CommonColorRepository
 	Cart          CartRepository
 	Address       AddressRepository
+	Checkout      CheckoutRepository
 }

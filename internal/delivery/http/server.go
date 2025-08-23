@@ -41,6 +41,7 @@ func registerProtectedRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
 	registerCommonColorRoutes(api, ucs)
 	registerCartRoutes(api, ucs)
 	registerAddressRoutes(api, ucs)
+	registerCheckoutRoutes(api, ucs)
 	// registerCartRoutes(api, ucs) // Uncomment when cart is ready
 }
 
@@ -111,5 +112,13 @@ func registerAddressRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
 		addressGroup.GET("/:address_id", addressHandler.GetAddressByIDHandler)
 		addressGroup.PATCH("/:address_id", addressHandler.UpdateAddressHandler)
 		addressGroup.DELETE("/:address_id", addressHandler.DeleteAddressHandler)
+	}
+}
+
+func registerCheckoutRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
+	checkoutHandler := NewCheckoutHandler(ucs.Checkout)
+	checkoutGroup := api.Group("/checkout")
+	{
+		checkoutGroup.POST("/summary", checkoutHandler.GetCheckoutSummaryHandler)
 	}
 }

@@ -50,6 +50,7 @@ func (r *GoramCartRepo) AddCartItemRepo(userId string, cartItem *entities.CartIt
 	}
 
 	cartItem.CartID = uid
+	cartItem.TotalAmount = cartItem.ProductPrice * float32(cartItem.Quantity)
 
 	if err := r.db.Create(cartItem).Error; err != nil {
 		return fmt.Errorf("failed to add item to cart: %w", err)
@@ -64,6 +65,7 @@ func (r *GoramCartRepo) UpdateCartItemRepo(itemId string, cartItem *entities.Car
 	}
 
 	cartItem.ID = uid
+	cartItem.TotalAmount = cartItem.ProductPrice * float32(cartItem.Quantity)
 
 	if err := r.db.Model(&entities.CartItem{}).
 		Where("id = ?", uid).

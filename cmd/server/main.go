@@ -33,6 +33,7 @@ func main() {
 		CommonColor:   repository.NewGoramCommonColorRepo(postgresDB),
 		Cart:          repository.NewGoramCartRepo(postgresDB),
 		Address:       repository.NewGoramAddressRepo(postgresDB),
+		Checkout:      repository.NewCheckoutRepo(postgresDB),
 	}
 
 	// Parse JWT expiry durations
@@ -53,6 +54,7 @@ func main() {
 		CommonColor:   usecase.NewCommonColorUseCase(repos.CommonColor),
 		Cart:          usecase.NewCartUseCase(repos.Cart),
 		Address:       usecase.NewAddressUseCase(repos.Address),
+		Checkout:      usecase.NewCheckoutUseCase(repos.Checkout),
 	}
 
 	// Start HTTP server

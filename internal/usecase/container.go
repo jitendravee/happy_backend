@@ -7,4 +7,5 @@ type Usecases struct {
 	CommonColor   *CommonColorUseCase
 	Cart          *CartUseCase
 	Address       *AddressUseCase
+	Checkout      *CheckoutUseCase
 }
