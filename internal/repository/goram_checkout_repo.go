@@ -19,6 +19,7 @@ func NewCheckoutRepo(db *gorm.DB) *CheckoutRepo {
 func (r *CheckoutRepo) GetCheckoutSummary(userID string, items *[]entities.CartItem, deliveryCharge, taxPercent float32) (*entities.CheckoutSummary, error) {
 	uid, err := uuid.Parse(userID)
 	if err != nil {
+
 		return nil, fmt.Errorf("invalid user id: %w", err)
 	}
 
