@@ -30,3 +30,18 @@ type CommonColorRepository interface {
 	UpdateCommonColor(colorID string, color *entities.CommonColor) (*entities.CommonColor, error)
 	DeleteCommonColorByID(colorID string) error
 }
+type CartRepository interface {
+	GetUserCartRepo(userId string) (*entities.Cart, error)
+	CreateUserCart(userId string) (*entities.Cart, error)
+	AddCartItemRepo(userId string, cartItem *entities.CartItem) error
+	UpdateCartItemRepo(itemId string, cartItem *entities.CartItem) (*entities.CartItem, error)
+	DeleteCartItemRepo(itemId string) error
+	GetCartItemByID(itemId string) (*entities.CartItem, error)
+}
+type AddressRepository interface {
+	CreateAddress(userID string, address *entities.Address) (*entities.Address, error)
+	GetAllAddresses(userID string) ([]*entities.Address, error)
+	GetAddressByID(userID, addressID string) (*entities.Address, error)
+	UpdateAddress(userID, addressID string, updated *entities.Address) (*entities.Address, error)
+	DeleteAddress(userID, addressID string) error
+}

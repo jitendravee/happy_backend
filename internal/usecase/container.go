@@ -5,4 +5,6 @@ type Usecases struct {
 	Product       *ProductUseCase
 	TrendingColor *TrendingColorUseCase
 	CommonColor   *CommonColorUseCase
+	Cart          *CartUseCase
+	Address       *AddressUseCase
 }

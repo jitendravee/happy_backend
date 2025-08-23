@@ -5,4 +5,6 @@ type Repositories struct {
 	Product       ProductRepository
 	TrendingColor TrendingColorRepository
 	CommonColor   CommonColorRepository
+	Cart          CartRepository
+	Address       AddressRepository
 }

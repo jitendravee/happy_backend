@@ -45,6 +45,7 @@ func (u *UserUsecase) Register(user *entities.User) (*entities.User, string, str
 		return nil, "", "", errors.New("email already registered")
 	}
 
+	// Hash password
 	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, "", "", errors.New("failed to hash password")
@@ -55,12 +56,11 @@ func (u *UserUsecase) Register(user *entities.User) (*entities.User, string, str
 		return nil, "", "", err
 	}
 
-	// Generate tokens right after successful signup
-	accessToken, err := jwt.GenerateToken(u.jwtSecret, u.jwtExpiry, user.ID)
+	accessToken, err := jwt.GenerateToken(u.jwtSecret, u.jwtExpiry, user.ID.String())
 	if err != nil {
 		return nil, "", "", errors.New("failed to create access token")
 	}
-	refreshToken, err := jwt.GenerateToken(u.jwtRefreshSecret, u.jwtRefreshExpiry, user.ID)
+	refreshToken, err := jwt.GenerateToken(u.jwtRefreshSecret, u.jwtRefreshExpiry, user.ID.String())
 	if err != nil {
 		return nil, "", "", errors.New("failed to create refresh token")
 	}
@@ -73,15 +73,16 @@ func (u *UserUsecase) Login(email, password string) (*entities.User, string, str
 	if err != nil || user == nil {
 		return nil, "", "", errors.New("invalid credentials")
 	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, "", "", errors.New("invalid credentials")
 	}
 
-	accessToken, err := jwt.GenerateToken(u.jwtSecret, u.jwtExpiry, user.ID)
+	accessToken, err := jwt.GenerateToken(u.jwtSecret, u.jwtExpiry, user.ID.String())
 	if err != nil {
 		return nil, "", "", errors.New("failed to create access token")
 	}
-	refreshToken, err := jwt.GenerateToken(u.jwtRefreshSecret, u.jwtRefreshExpiry, user.ID)
+	refreshToken, err := jwt.GenerateToken(u.jwtRefreshSecret, u.jwtRefreshExpiry, user.ID.String())
 	if err != nil {
 		return nil, "", "", errors.New("failed to create refresh token")
 	}

@@ -39,6 +39,8 @@ func registerProtectedRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
 	registerProductRoutes(api, ucs)
 	registerTrendingColorRoutes(api, ucs)
 	registerCommonColorRoutes(api, ucs)
+	registerCartRoutes(api, ucs)
+	registerAddressRoutes(api, ucs)
 	// registerCartRoutes(api, ucs) // Uncomment when cart is ready
 }
 
@@ -77,6 +79,17 @@ func registerTrendingColorRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
 		trendingColorGroup.PATCH("/:trending_id", trendingColorHandler.UpdateTrendingColorHandler)
 	}
 }
+func registerCartRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
+	cartHandler := NewCartHandler(ucs.Cart)
+	cartHandlerGroup := api.Group("/cart")
+	{
+		cartHandlerGroup.GET("", cartHandler.GetCartDetailsHandler)
+		cartHandlerGroup.POST("", cartHandler.AddCartItemHandler)
+		cartHandlerGroup.GET("/:cart_item_id", cartHandler.GetCartItemByIdHandler)
+		cartHandlerGroup.PATCH("/:cart_item_id", cartHandler.UpdateCartItemHandler)
+		cartHandlerGroup.DELETE("/:cart_item_id", cartHandler.DeleteCartItemByIdHandler)
+	}
+}
 
 // Common colors
 func registerCommonColorRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
@@ -87,5 +100,16 @@ func registerCommonColorRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
 		commonColorGroup.DELETE("/:common_id", commonColorHandler.DeleteCommonColorByIDHandler)
 		commonColorGroup.GET("", commonColorHandler.GetAllCommonColorsHandler)
 		commonColorGroup.PATCH("/:common_id", commonColorHandler.UpdateCommonColorHandler)
+	}
+}
+func registerAddressRoutes(api *gin.RouterGroup, ucs *usecase.Usecases) {
+	addressHandler := NewAddressHandler(ucs.Address)
+	addressGroup := api.Group("/addresses")
+	{
+		addressGroup.POST("", addressHandler.CreateAddressHandler)
+		addressGroup.GET("", addressHandler.GetAllAddressesHandler)
+		addressGroup.GET("/:address_id", addressHandler.GetAddressByIDHandler)
+		addressGroup.PATCH("/:address_id", addressHandler.UpdateAddressHandler)
+		addressGroup.DELETE("/:address_id", addressHandler.DeleteAddressHandler)
 	}
 }

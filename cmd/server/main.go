@@ -15,8 +15,7 @@ func main() {
 	// Load config
 	cfg := config.LoadConfig()
 
-	// Initialize Postgres (Neon) with GORM
-	postgresDB, err := db.NewPostgresDatabase(cfg) // <- this replaces mongo
+	postgresDB, err := db.NewPostgresDatabase(cfg)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
@@ -32,6 +31,8 @@ func main() {
 		User:          repository.NewGormUserRepo(postgresDB),
 		TrendingColor: repository.NewGoramTrendingColorRepo(postgresDB),
 		CommonColor:   repository.NewGoramCommonColorRepo(postgresDB),
+		Cart:          repository.NewGoramCartRepo(postgresDB),
+		Address:       repository.NewGoramAddressRepo(postgresDB),
 	}
 
 	// Parse JWT expiry durations
@@ -50,6 +51,8 @@ func main() {
 		Product:       usecase.NewProductUseCase(repos.Product),
 		TrendingColor: usecase.NewTrendingColorUseCase(repos.TrendingColor),
 		CommonColor:   usecase.NewCommonColorUseCase(repos.CommonColor),
+		Cart:          usecase.NewCartUseCase(repos.Cart),
+		Address:       usecase.NewAddressUseCase(repos.Address),
 	}
 
 	// Start HTTP server

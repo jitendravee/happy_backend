@@ -33,5 +33,8 @@ func Migrate(db *gorm.DB) error {
 		&entities.Composition{},
 		&entities.TrendingColor{},
 		&entities.CommonColor{},
+		&entities.Cart{},
+		&entities.CartItem{},
+		&entities.Address{},
 	)
 }
